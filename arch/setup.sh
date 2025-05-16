@@ -44,3 +44,9 @@ install_nodejs() {
   echo "Installing nodejs"
   nvm install node
 }
+
+zsh_setup() {
+  echo "Setting up zsh"
+  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+}
+
