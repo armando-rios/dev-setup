@@ -64,3 +64,22 @@ zsh_setup() {
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 }
 
+echo "Running setup script"
+
+run_step "Updating system" update_system
+
+run_step "Installing packages" install_packages
+
+run_step "Installing yay" install_yay
+
+run_step "Installing yay packages" install_aur_packages
+
+run_step "Cloning dotfiles" clone_dotfiles
+
+run_step "Copying dotfiles" copy_dotfiles
+
+run_step "Installing nodejs" install_nodejs
+
+run_step "Setting up zsh" zsh_setup
+
+echo "Restart your system for get all changes"
