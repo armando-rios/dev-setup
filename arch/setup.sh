@@ -1,5 +1,19 @@
 #!/bin/bash
 
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+run_step() {
+  local message="$1"
+  local function_name="$2"
+
+  echo -e "${GREEN}==> $message${NC}"
+  sleep 1
+  $function_name
+  sleep 1
+  clear
+}
+
 update_system() {
   echo "Updating system"
   sudo pacman -Syu --noconfirm
