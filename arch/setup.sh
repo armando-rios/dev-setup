@@ -27,3 +27,11 @@ clone_dotfiles() {
   git clone https://github.com/armando-rios/dotfiles.git ~/.dotfiles
 }
 
+copy_dotfiles() {
+  echo "Copying dotfiles"
+  cp -r ~/.dotfiles/.config ~/.config
+  cp -r ~/.dotfiles/.zshrc ~/.zshrc
+  cp -r ~/.dotfiles/.tmux.conf ~/.tmux.conf
+  cp -r ~/.dotfiles/.ssh/ ~/.ssh
+}
+
