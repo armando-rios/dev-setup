@@ -35,3 +35,12 @@ copy_dotfiles() {
   cp -r ~/.dotfiles/.ssh/ ~/.ssh
 }
 
+zsh_setup() {
+  echo "Setting up zsh"
+  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+}
+
+install_nodejs() {
+  echo "Installing nodejs"
+  nvm install node
+}
