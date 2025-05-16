@@ -9,3 +9,10 @@ install_packages() {
   echo "Installing packages"
   sudo pacman -S --needed --noconfirm git base-devel nvm neovim ripgrep fzf gcc waybar hyprpaper hyprsunset swaync zsh ghostty discord lazygit steam
 }
+
+install_yay() {
+  echo "Installing yay"
+  git clone https://aur.archlinux.org/yay.git
+  cd yay
+  makepkg -si
+}
