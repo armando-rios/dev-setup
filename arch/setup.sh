@@ -16,3 +16,9 @@ install_yay() {
   cd yay
   makepkg -si
 }
+
+install_aur_packages() {
+  echo "Installing yay packages"
+  yay -S --needed --noconfirm zen-browser-bin wshowkeys-mao-git hyprshot
+}
+
