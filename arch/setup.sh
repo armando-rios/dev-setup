@@ -22,3 +22,8 @@ install_aur_packages() {
   yay -S --needed --noconfirm zen-browser-bin wshowkeys-mao-git hyprshot
 }
 
+clone_dotfiles() {
+  echo "Cloning dotfiles"
+  git clone https://github.com/armando-rios/dotfiles.git ~/.dotfiles
+}
+
