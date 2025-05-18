@@ -1,6 +1,7 @@
 #!/bin/bash
 
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 run_step() {
@@ -34,11 +35,18 @@ install_yay() {
 install_aur_packages() {
   echo "Installing yay packages"
   yay -S --needed --noconfirm zen-browser-bin wshowkeys-mao-git hyprshot
+  cd ~
 }
 
 clone_dotfiles() {
   echo "Cloning dotfiles"
   git clone https://github.com/armando-rios/dotfiles.git ~/.dotfiles
+}
+
+zsh_setup() {
+  echo "Setting up zsh"
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  exit
 }
 
 copy_dotfiles() {
@@ -49,19 +57,11 @@ copy_dotfiles() {
   cp -r ~/.dotfiles/.ssh/ ~/.ssh
 }
 
-zsh_setup() {
-  echo "Setting up zsh"
-  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-}
-
 install_nodejs() {
   echo "Installing nodejs"
+  zsh
   nvm install node
-}
-
-zsh_setup() {
-  echo "Setting up zsh"
-  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  exit
 }
 
 echo "Running setup script"
@@ -76,10 +76,11 @@ run_step "Installing yay packages" install_aur_packages
 
 run_step "Cloning dotfiles" clone_dotfiles
 
+run_step "Setting up zsh" zsh_setup
+
 run_step "Copying dotfiles" copy_dotfiles
 
 run_step "Installing nodejs" install_nodejs
 
-run_step "Setting up zsh" zsh_setup
-
-echo "Restart your system for get all changes"
+echo -e "${GREEN}Setup complete!${NC}"
+echo -e "${YELLOW}Please restart your computer.${NC}"
