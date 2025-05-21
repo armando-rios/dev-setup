@@ -46,7 +46,6 @@ clone_dotfiles() {
 zsh_setup() {
   echo "Setting up zsh"
   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-  exit
 }
 
 copy_dotfiles() {
@@ -76,11 +75,11 @@ run_step "Installing yay packages" install_aur_packages
 
 run_step "Cloning dotfiles" clone_dotfiles
 
-run_step "Setting up zsh" zsh_setup
-
 run_step "Copying dotfiles" copy_dotfiles
 
 run_step "Installing nodejs" install_nodejs
+
+run_step "Setting up zsh" zsh_setup
 
 echo -e "${GREEN}Setup complete!${NC}"
 echo -e "${YELLOW}Please restart your computer.${NC}"
