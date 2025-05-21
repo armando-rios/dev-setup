@@ -32,6 +32,11 @@ install_yay() {
   makepkg -si
 }
 
+install_homebrew() {
+  echo "Installing Brew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+}
+
 install_aur_packages() {
   echo "Installing yay packages"
   yay -S --needed --noconfirm zen-browser-bin wshowkeys-mao-git hyprshot
