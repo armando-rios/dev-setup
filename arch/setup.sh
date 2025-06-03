@@ -58,14 +58,14 @@ copy_dotfiles() {
 
 install_nodejs() {
   echo "Installing nodejs"
-  zsh
   nvm install node
   exit
 }
 
 zsh_setup() {
   echo "Setting up zsh"
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  git clone https://github.com/ohmyzsh/ohmyzsh ~/.oh-my-zsh
+  chsh -s $(which zsh)
 }
 
 echo "Running setup script"
