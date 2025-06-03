@@ -48,11 +48,6 @@ clone_dotfiles() {
   git clone https://github.com/armando-rios/dotfiles.git ~/.dotfiles
 }
 
-zsh_setup() {
-  echo "Setting up zsh"
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-}
-
 copy_dotfiles() {
   echo "Copying dotfiles"
   cp -r ~/.dotfiles/.config ~/.config
@@ -88,6 +83,8 @@ run_step "Cloning dotfiles" clone_dotfiles
 run_step "Copying dotfiles" copy_dotfiles
 
 run_step "Installing nodejs" install_nodejs
+
+run_step "Installing Homebrew" install_homebrew
 
 run_step "Setting up zsh" zsh_setup
 
