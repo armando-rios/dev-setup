@@ -68,6 +68,11 @@ install_nodejs() {
   exit
 }
 
+zsh_setup() {
+  echo "Setting up zsh"
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+}
+
 echo "Running setup script"
 
 run_step "Updating system" update_system
