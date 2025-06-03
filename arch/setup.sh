@@ -57,9 +57,8 @@ copy_dotfiles() {
 }
 
 install_nodejs() {
-  echo "Installing nodejs"
-  nvm install node
-  exit
+  echo "Installing nodejs in a new zsh terminal"
+  zsh -c "nvm install node"
 }
 
 zsh_setup() {
@@ -82,11 +81,11 @@ run_step "Cloning dotfiles" clone_dotfiles
 
 run_step "Copying dotfiles" copy_dotfiles
 
-run_step "Installing nodejs" install_nodejs
-
 run_step "Installing Homebrew" install_homebrew
 
 run_step "Setting up zsh" zsh_setup
+
+run_step "Installing nodejs" install_nodejs
 
 echo -e "${GREEN}Setup complete!${NC}"
 echo -e "${YELLOW}Please restart your computer.${NC}"
