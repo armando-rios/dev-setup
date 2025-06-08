@@ -50,10 +50,10 @@ clone_dotfiles() {
 
 copy_dotfiles() {
   echo "Copying dotfiles"
-  cp -r ~/.dotfiles/.config ~/.config
-  cp -r ~/.dotfiles/.zshrc ~/.zshrc
-  cp -r ~/.dotfiles/.tmux.conf ~/.tmux.conf
-  cp -r ~/.dotfiles/.ssh/ ~/.ssh
+  cp -r ~/.dotfiles/.config ~/
+  cp -r ~/.dotfiles/.zshrc ~/
+  cp -r ~/.dotfiles/.tmux.conf ~/
+  cp -r ~/.dotfiles/.ssh/ ~/
 }
 
 install_nodejs() {
