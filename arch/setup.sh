@@ -48,6 +48,14 @@ clone_dotfiles() {
   git clone https://github.com/armando-rios/dotfiles.git ~/.dotfiles
 }
 
+# function create simbolic links for the dotfiles
+simbolic_link_dotfiles() {
+  echo "Creating symbolic links for dotfiles"
+  cd ~/.dotfiles
+  stow .
+  cd ~
+}
+
 copy_dotfiles() {
   echo "Copying dotfiles"
   cp -r ~/.dotfiles/.config ~/
@@ -79,7 +87,9 @@ run_step "Installing yay packages" install_aur_packages
 
 run_step "Cloning dotfiles" clone_dotfiles
 
-run_step "Copying dotfiles" copy_dotfiles
+# run_step "Copying dotfiles" copy_dotfiles
+
+run_step "Creating symbolic links for dotfiles" simbolic_link_dotfiles
 
 run_step "Installing Homebrew" install_homebrew
 
