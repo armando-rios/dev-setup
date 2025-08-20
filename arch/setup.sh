@@ -59,6 +59,11 @@ copy_dotfiles() {
   cp -r ~/.dotfiles/.ssh/ ~/
 }
 
+install_bun() {
+  echo "Installing bun in a new zsh terminal"
+  curl -fsSL https://bun.sh/install | bash
+}
+
 install_nodejs() {
   echo "Installing nodejs in a new zsh terminal"
   zsh -c "nvm install node"
@@ -87,6 +92,8 @@ run_step "Cloning dotfiles" clone_dotfiles
 run_step "Creating symbolic links for dotfiles" simbolic_link_dotfiles
 
 run_step "Setting up zsh" zsh_setup
+
+run_step "Installing bun" install_bun
 
 run_step "Installing nodejs" install_nodejs
 
