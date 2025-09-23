@@ -1,7 +1,11 @@
 #!/bin/bash
 
+# Exit immediately if a command exits with a non-zero status
+set -e
+
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 run_step() {
@@ -10,7 +14,15 @@ run_step() {
 
   echo -e "${GREEN}==> $message${NC}"
   sleep 1
-  $function_name
+  
+  # Execute function and capture exit code
+  if $function_name; then
+    echo -e "${GREEN}✓ $message completed successfully${NC}"
+  else
+    echo -e "${RED}✗ $message failed${NC}"
+    exit 1
+  fi
+  
   sleep 1
   clear
 }
@@ -110,6 +122,18 @@ change_shell_to_zsh() {
 }
 
 echo "Running setup script"
+
+# Verificar que se está ejecutando en Arch Linux
+if ! command -v pacman &> /dev/null; then
+    echo -e "${RED}Error: This script is designed for Arch Linux (pacman not found)${NC}"
+    exit 1
+fi
+
+# Verificar conexión a internet
+if ! ping -c 1 google.com &> /dev/null; then
+    echo -e "${RED}Error: No internet connection detected${NC}"
+    exit 1
+fi
 
 run_step "Updating system" update_system
 
