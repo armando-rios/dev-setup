@@ -98,10 +98,15 @@ install_nodejs() {
   zsh -c "source ~/.zshrc && nvm install --lts && nvm use --lts"
 }
 
-zsh_setup() {
-  echo "Setting up zsh"
+install_ohmyzsh() {
+  echo "Installing oh-my-zsh"
   git clone https://github.com/ohmyzsh/ohmyzsh ~/.oh-my-zsh
+}
+
+change_shell_to_zsh() {
+  echo "Changing default shell to zsh"
   chsh -s $(which zsh)
+  echo "Shell changed to zsh. Please restart your computer for full effect."
 }
 
 echo "Running setup script"
@@ -114,13 +119,15 @@ run_step "Installing yay" install_yay
 
 run_step "Installing yay packages" install_aur_packages
 
+run_step "Installing oh-my-zsh" install_ohmyzsh
+
 run_step "Cloning dotfiles" clone_dotfiles
 
 # run_step "Copying dotfiles" copy_dotfiles
 
 run_step "Creating symbolic links for dotfiles" simbolic_link_dotfiles
 
-run_step "Setting up zsh" zsh_setup
+run_step "Changing shell to zsh" change_shell_to_zsh
 
 run_step "Installing bun" install_bun
 
