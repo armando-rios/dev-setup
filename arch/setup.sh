@@ -77,8 +77,9 @@ install_bun() {
 }
 
 install_nodejs() {
-  echo "Installing nodejs in a new zsh terminal"
-  zsh -c "nvm install node"
+  echo "Installing nodejs with nvm (from dotfiles config)"
+  # Usar zsh con dotfiles ya aplicados que incluyen nvm
+  zsh -c "source ~/.zshrc && nvm install --lts && nvm use --lts"
 }
 
 zsh_setup() {
