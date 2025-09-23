@@ -59,7 +59,16 @@ clone_dotfiles() {
 simbolic_link_dotfiles() {
   echo "Creating symbolic links for dotfiles"
   cd ~/.dotfiles
+  
+  # Eliminar archivos y directorios que van a ser reemplazados por dotfiles
+  echo "Removing conflicting default config files and directories"
+  rm -rf ~/.config/alacritty ~/.config/ghostty ~/.config/hypr ~/.config/kitty ~/.config/nvim ~/.config/ohmyposh ~/.config/posting ~/.config/waybar ~/.config/wofi ~/.config/zed
+  rm -f ~/.zshrc ~/.tmux.conf
+  rm -rf ~/.ssh
+  
+  # Crear enlaces simbólicos con stow
   stow .
+  
   cd ~
 }
 
