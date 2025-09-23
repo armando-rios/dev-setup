@@ -39,15 +39,22 @@ install_packages() {
 
 install_yay() {
   echo "Installing yay"
+  # Usar directorio temporal para compilación
+  cd /tmp
+  # Limpiar instalación previa si existe
+  rm -rf yay
+  # Clonar y compilar yay
   git clone https://aur.archlinux.org/yay.git
   cd yay
-  makepkg -si
+  makepkg -si --noconfirm
+  # Limpiar directorio temporal y volver al home
+  cd ~
+  rm -rf /tmp/yay
 }
 
 install_aur_packages() {
-  echo "Installing yay packages"
+  echo "Installing AUR packages"
   yay -S --needed --noconfirm zen-browser-bin wshowkeys-mao-git hyprshot
-  cd ~
 }
 
 clone_dotfiles() {
