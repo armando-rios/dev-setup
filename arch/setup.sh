@@ -15,6 +15,18 @@ run_step() {
   clear
 }
 
+enable_multilib() {
+  echo "Checking multilib repository"
+  if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
+    echo "Enabling multilib repository for Steam support"
+    sudo sed -i '/^#\[multilib\]/,/^#Include.*multilib/ s/^#//' /etc/pacman.conf
+    sudo pacman -Sy --noconfirm
+    echo "Multilib repository enabled"
+  else
+    echo "Multilib repository already enabled"
+  fi
+}
+
 update_system() {
   echo "Updating system"
   sudo pacman -Syu --noconfirm
@@ -22,7 +34,7 @@ update_system() {
 
 install_packages() {
   echo "Installing packages"
-  sudo pacman -S --needed --noconfirm git base-devel nvm neovim ripgrep fzf gcc waybar hyprpaper hyprsunset swaync zsh ghostty lsd ttf-jetbrains-mono-nerd discord lazygit unzip steam stow
+  sudo pacman -S --needed --noconfirm git base-devel nvm neovim ripgrep fzf gcc waybar hyprpaper hyprsunset swaync zsh ghostty lsd ttf-jetbrains-mono-nerd discord lazygit unzip stow
 }
 
 install_yay() {
