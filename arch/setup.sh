@@ -27,18 +27,6 @@ run_step() {
   clear
 }
 
-enable_multilib() {
-  echo "Checking multilib repository"
-  if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
-    echo "Enabling multilib repository for Steam support"
-    sudo sed -i '/^#\[multilib\]/,/^#Include.*multilib/ s/^#//' /etc/pacman.conf
-    sudo pacman -Sy --noconfirm
-    echo "Multilib repository enabled"
-  else
-    echo "Multilib repository already enabled"
-  fi
-}
-
 update_system() {
   echo "Updating system"
   sudo pacman -Syu --noconfirm
@@ -146,8 +134,6 @@ run_step "Installing yay packages" install_aur_packages
 run_step "Installing oh-my-zsh" install_ohmyzsh
 
 run_step "Cloning dotfiles" clone_dotfiles
-
-# run_step "Copying dotfiles" copy_dotfiles
 
 run_step "Creating symbolic links for dotfiles" simbolic_link_dotfiles
 
