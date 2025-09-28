@@ -7,7 +7,7 @@ Entry point for the installation system
 import sys
 import time
 from utils.system import check_internet_connection, is_uefi, sync_clock, get_available_disks, run_command
-from utils.disk import create_uefi_partitions, create_bios_partitions, format_partitions, mount_partitions, generate_fstab
+from utils.disk import create_uefi_partitions, create_bios_partitions, format_partitions, mount_partitions, generate_fstab, get_safe_disks, cleanup_disk
 from utils.chroot import setup_timezone, setup_locales, setup_hostname, setup_network, setup_users, setup_bootloader
 from utils.tui import TUI
 
@@ -87,9 +87,11 @@ class ArchInstaller:
     
     def select_disk(self):
         """Let user select installation disk"""
-        disks = get_available_disks()
+        disks = get_safe_disks()
         if not disks:
-            self.tui.show_info_screen("Error", ["ERROR: No disks found!"], step=3, total_steps=6)
+            self.tui.show_info_screen("Error", ["ERROR: No safe disks found!", 
+                                               "All available disks appear to be the Arch ISO device."], 
+                                    step=3, total_steps=6)
             return False
         
         disk_options = [f"{disk['name']} - {disk['size']} ({disk['model']})" for disk in disks]
@@ -239,9 +241,13 @@ class ArchInstaller:
         ]
         
         try:
-            # Partition disk
+            # Clean up disk first
             self.tui.show_progress("Installing System", steps, step=6, total_steps=6)
             
+            if not cleanup_disk(self.config['disk']):
+                raise Exception("Failed to clean up disk")
+            
+            # Partition disk
             if self.config['uefi']:
                 success = create_uefi_partitions(self.config['disk'])
             else:
