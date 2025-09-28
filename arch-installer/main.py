@@ -8,6 +8,7 @@ import sys
 import time
 from utils.system import check_internet_connection, is_uefi, sync_clock, get_available_disks, run_command
 from utils.disk import create_uefi_partitions, create_bios_partitions, format_partitions, mount_partitions, generate_fstab
+from utils.chroot import setup_timezone, setup_locales, setup_hostname, setup_network, setup_users, setup_bootloader
 from utils.tui import TUI
 
 
@@ -224,7 +225,7 @@ class ArchInstaller:
             self.tui.show_progress("Installing System", steps, step=6, total_steps=6)
             
             # Install base system
-            install_cmd = "pacstrap /mnt base linux linux-firmware"
+            install_cmd = "pacstrap /mnt base linux linux-firmware networkmanager grub wpa_supplicant dialog vim"
             if not run_command(install_cmd, capture_output=False):
                 raise Exception("Failed to install base system")
             
@@ -275,6 +276,97 @@ class ArchInstaller:
         
         self.tui.show_info_screen("Installation Complete", lines, step=6, total_steps=6)
     
+    def phase2_system_configuration(self):
+        """Phase 2: System configuration with chroot"""
+        steps = [
+            ("Setting up timezone...", "current"),
+            ("Configuring locales...", "pending"),
+            ("Setting hostname and network...", "pending"),
+            ("Creating users and passwords...", "pending"),
+            ("Installing bootloader...", "pending")
+        ]
+        
+        try:
+            # Setup timezone
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
+            
+            if not setup_timezone(self.config['timezone']):
+                raise Exception("Failed to setup timezone")
+            
+            steps[0] = ("Timezone configured", "completed")
+            steps[1] = ("Configuring locales...", "current")
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
+            
+            # Setup locales
+            if not setup_locales(self.config['locale']):
+                raise Exception("Failed to setup locales")
+            
+            steps[1] = ("Locales configured", "completed")
+            steps[2] = ("Setting hostname and network...", "current")
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
+            
+            # Setup hostname and network
+            if not setup_hostname(self.config['hostname']):
+                raise Exception("Failed to setup hostname")
+            
+            if not setup_network():
+                raise Exception("Failed to setup network")
+            
+            steps[2] = ("Hostname and network configured", "completed")
+            steps[3] = ("Creating users and passwords...", "current")
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
+            
+            # Setup users
+            if not setup_users(self.config['username']):
+                raise Exception("Failed to setup users")
+            
+            steps[3] = ("Users and passwords configured", "completed")
+            steps[4] = ("Installing bootloader...", "current")
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
+            
+            # Setup bootloader
+            if not setup_bootloader(self.config['uefi'], self.config['disk']):
+                raise Exception("Failed to setup bootloader")
+            
+            steps[4] = ("Bootloader installed", "completed")
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
+            
+            time.sleep(2)
+            return True
+            
+        except Exception as e:
+            error_steps = steps.copy()
+            for i, (desc, status) in enumerate(error_steps):
+                if status == "current":
+                    error_steps[i] = (f"{desc} FAILED", "error")
+                    break
+            
+            self.tui.show_progress("Configuration Failed", error_steps, step=7, total_steps=8)
+            self.tui.show_info_screen("Error", [f"ERROR: {str(e)}"], step=7, total_steps=8)
+            return False
+    
+    def phase2_completion(self):
+        """Show Phase 2 completion message"""
+        lines = [
+            "🎉 Phase 2 Configuration Complete!",
+            "",
+            "📋 System is now fully configured:",
+            "  ✓ Timezone and locales set",
+            "  ✓ Hostname and network configured", 
+            "  ✓ Users and passwords created",
+            "  ✓ GRUB bootloader installed",
+            "  ✓ System ready to boot",
+            "",
+            "🔄 Next phases will include:",
+            "  • Essential software installation",
+            "  • Hyprland desktop environment",
+            "  • Personal dotfiles and customization",
+            "",
+            "System installation completed successfully!"
+        ]
+        
+        self.tui.show_info_screen("System Ready!", lines, step=8, total_steps=8)
+    
     def run(self):
         """Run the installer"""
         try:
@@ -299,6 +391,11 @@ class ArchInstaller:
                 return
             
             self.completion()
+            
+            if not self.phase2_system_configuration():
+                return
+            
+            self.phase2_completion()
             
         except KeyboardInterrupt:
             pass
