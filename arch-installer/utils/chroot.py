@@ -10,7 +10,13 @@ from .system import run_command
 def chroot_command(command):
     """Execute command in chroot environment"""
     chroot_cmd = f"arch-chroot /mnt {command}"
-    return run_command(chroot_cmd, capture_output=False)
+    print(f"CHROOT: {chroot_cmd}")
+    result = run_command(chroot_cmd, capture_output=False)
+    if result:
+        print("CHROOT: Command completed successfully")
+    else:
+        print("CHROOT: Command failed")
+    return result
 
 
 def setup_timezone(timezone):
@@ -102,21 +108,30 @@ def setup_users(username, root_password, user_password):
     
     # Set root password
     print("Setting root password...")
-    if not chroot_command(f"echo 'root:{root_password}' | chpasswd"):
-        print("Failed to set root password")
+    cmd = f"echo 'root:{root_password}' | chpasswd"
+    print(f"Executing: {cmd}")
+    if not chroot_command(cmd):
+        print("ERROR: Failed to set root password")
         return False
+    print("Root password set successfully")
     
     # Create user
     print(f"Creating user: {username}")
-    if not chroot_command(f"useradd -m -G wheel,audio,video,optical,storage -s /bin/bash {username}"):
-        print(f"Failed to create user: {username}")
+    cmd = f"useradd -m -G wheel,audio,video,optical,storage -s /bin/bash {username}"
+    print(f"Executing: {cmd}")
+    if not chroot_command(cmd):
+        print(f"ERROR: Failed to create user: {username}")
         return False
+    print(f"User {username} created successfully")
     
     # Set user password
     print(f"Setting password for user: {username}")
-    if not chroot_command(f"echo '{username}:{user_password}' | chpasswd"):
-        print(f"Failed to set password for user: {username}")
+    cmd = f"echo '{username}:{user_password}' | chpasswd"
+    print(f"Executing: {cmd}")
+    if not chroot_command(cmd):
+        print(f"ERROR: Failed to set password for user: {username}")
         return False
+    print(f"Password for {username} set successfully")
     
     # Configure sudo
     print("Configuring sudo access...")
