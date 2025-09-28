@@ -93,12 +93,12 @@ def mount_partitions(disk, is_uefi):
     if is_uefi:
         boot_partition = get_partition_name(disk, 1)
         print("Creating EFI mount point...")
-        if not run_command("mkdir -p /mnt/boot/efi", capture_output=False):
+        if not run_command("mkdir -p /mnt/boot", capture_output=False):
             print("Failed to create EFI directory")
             return False
         
         print(f"Mounting EFI partition: {boot_partition}")
-        if not run_command(f"mount {boot_partition} /mnt/boot/efi", capture_output=False):
+        if not run_command(f"mount {boot_partition} /mnt/boot", capture_output=False):
             print(f"Failed to mount EFI partition: {boot_partition}")
             return False
         print("EFI partition mounted successfully")
