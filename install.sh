@@ -25,16 +25,20 @@ echo -e "${BLUE}║                     Remote Installer                        
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════════╝${NC}"
 echo
 
-# Check if running as root
+# Check environment and adjust accordingly
 if [[ $EUID -eq 0 ]]; then
-   echo -e "${RED}⚠️  This script should NOT be run as root!${NC}"
-   echo -e "${YELLOW}   Run it as a normal user, it will ask for sudo when needed.${NC}"
-   echo
-   read -p "Continue anyway? (y/N): " -n 1 -r
-   echo
-   if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-       exit 1
+   # Running as root - check if we're in Arch ISO
+   if [[ -f /etc/arch-release ]] && [[ -d /run/archiso ]]; then
+       echo -e "${GREEN}✅ Running as root in Arch Linux ISO (normal)${NC}"
+       PYTHON_CMD="python3"
+   else
+       echo -e "${YELLOW}⚠️  Running as root outside Arch ISO${NC}"
+       echo -e "${YELLOW}   This is unusual but will continue...${NC}"
+       PYTHON_CMD="python3"
    fi
+else
+   echo -e "${GREEN}✅ Running as normal user${NC}"
+   PYTHON_CMD="sudo python3"
 fi
 
 # Check for required tools
@@ -131,11 +135,11 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo -e "${GREEN}🚀 Starting installer...${NC}"
     echo
     cd arch-installer
-    exec sudo python3 main.py
+    exec $PYTHON_CMD main.py
 else
     echo -e "${YELLOW}📝 To run the installer later:${NC}"
     echo -e "${BLUE}   cd ${TEMP_DIR}/arch-installer${NC}"
-    echo -e "${BLUE}   sudo python3 main.py${NC}"
+    echo -e "${BLUE}   $PYTHON_CMD main.py${NC}"
     echo
     echo -e "${YELLOW}📝 To clean up temporary files:${NC}"
     echo -e "${BLUE}   rm -rf ${TEMP_DIR}${NC}"
