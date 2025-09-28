@@ -15,9 +15,16 @@ def create_uefi_partitions(disk):
         f"sgdisk --new=2:0:0 --typecode=2:8300 --change-name=2:'Linux filesystem' {disk}"
     ]
     
-    for cmd in commands:
-        if not run_command(cmd, capture_output=False):
+    for i, cmd in enumerate(commands, 1):
+        print(f"Executing step {i}/{len(commands)}: {cmd}")
+        result = run_command(cmd, capture_output=True)
+        if result is None:
+            print(f"Error executing: {cmd}")
+            # Get detailed error
+            error_result = run_command(f"{cmd} 2>&1", capture_output=True)
+            print(f"Error details: {error_result}")
             return False
+        print(f"Step {i} completed successfully")
     return True
 
 
@@ -29,46 +36,72 @@ def create_bios_partitions(disk):
         f"sgdisk --new=2:0:0 --typecode=2:8300 --change-name=2:'Linux filesystem' {disk}"
     ]
     
-    for cmd in commands:
-        if not run_command(cmd, capture_output=False):
+    for i, cmd in enumerate(commands, 1):
+        print(f"Executing step {i}/{len(commands)}: {cmd}")
+        result = run_command(cmd, capture_output=True)
+        if result is None:
+            print(f"Error executing: {cmd}")
+            # Get detailed error
+            error_result = run_command(f"{cmd} 2>&1", capture_output=True)
+            print(f"Error details: {error_result}")
             return False
+        print(f"Step {i} completed successfully")
     return True
+
+
+def get_partition_name(disk, partition_number):
+    """Get correct partition name for different disk types"""
+    if 'nvme' in disk or 'mmcblk' in disk:
+        return f"{disk}p{partition_number}"
+    else:
+        return f"{disk}{partition_number}"
 
 
 def format_partitions(disk, is_uefi):
     """Format partitions according to system type"""
     if is_uefi:
-        boot_partition = f"{disk}1"
-        root_partition = f"{disk}2"
+        boot_partition = get_partition_name(disk, 1)
+        root_partition = get_partition_name(disk, 2)
         
-        # Format EFI partition
+        print(f"Formatting EFI partition: {boot_partition}")
         if not run_command(f"mkfs.fat -F32 {boot_partition}", capture_output=False):
+            print(f"Failed to format EFI partition: {boot_partition}")
             return False
+        print("EFI partition formatted successfully")
     else:
-        root_partition = f"{disk}2"
+        root_partition = get_partition_name(disk, 2)
     
-    # Format root partition
-    if not run_command(f"mkfs.ext4 {root_partition}", capture_output=False):
+    print(f"Formatting root partition: {root_partition}")
+    if not run_command(f"mkfs.ext4 -F {root_partition}", capture_output=False):
+        print(f"Failed to format root partition: {root_partition}")
         return False
+    print("Root partition formatted successfully")
     
     return True
 
 
 def mount_partitions(disk, is_uefi):
     """Mount partitions to /mnt"""
-    root_partition = f"{disk}2"
+    root_partition = get_partition_name(disk, 2)
     
-    # Mount root
+    print(f"Mounting root partition: {root_partition}")
     if not run_command(f"mount {root_partition} /mnt", capture_output=False):
+        print(f"Failed to mount root partition: {root_partition}")
         return False
+    print("Root partition mounted successfully")
     
     if is_uefi:
-        boot_partition = f"{disk}1"
-        # Create and mount EFI directory
+        boot_partition = get_partition_name(disk, 1)
+        print("Creating EFI mount point...")
         if not run_command("mkdir -p /mnt/boot/efi", capture_output=False):
+            print("Failed to create EFI directory")
             return False
+        
+        print(f"Mounting EFI partition: {boot_partition}")
         if not run_command(f"mount {boot_partition} /mnt/boot/efi", capture_output=False):
+            print(f"Failed to mount EFI partition: {boot_partition}")
             return False
+        print("EFI partition mounted successfully")
     
     return True
 
