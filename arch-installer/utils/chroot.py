@@ -96,13 +96,13 @@ def setup_network():
     return True
 
 
-def setup_users(username):
+def setup_users(username, root_password, user_password):
     """Configure root password and create user"""
     print("Setting up users...")
     
     # Set root password
     print("Setting root password...")
-    if not chroot_command("passwd"):
+    if not chroot_command(f"echo 'root:{root_password}' | chpasswd"):
         print("Failed to set root password")
         return False
     
@@ -114,7 +114,7 @@ def setup_users(username):
     
     # Set user password
     print(f"Setting password for user: {username}")
-    if not chroot_command(f"passwd {username}"):
+    if not chroot_command(f"echo '{username}:{user_password}' | chpasswd"):
         print(f"Failed to set password for user: {username}")
         return False
     

@@ -176,6 +176,52 @@ class ArchInstaller:
             locale_map = ["en_US.UTF-8", "en_GB.UTF-8", "es_ES.UTF-8", "es_MX.UTF-8"]
             self.config['locale'] = locale_map[locale_choice]
         
+        # Root password
+        while True:
+            self.config['root_password'] = self.tui.show_password_input("Security Configuration", 
+                                                                       "Enter root password:", 
+                                                                       step=4, total_steps=6)
+            if self.config['root_password']:
+                # Confirm password
+                confirm_password = self.tui.show_password_input("Security Configuration", 
+                                                               "Confirm root password:", 
+                                                               step=4, total_steps=6)
+                if self.config['root_password'] == confirm_password:
+                    break
+                else:
+                    self.tui.show_info_screen("Password Mismatch", 
+                                            ["ERROR: Passwords do not match!", 
+                                             "Please try again."], 
+                                            step=4, total_steps=6)
+            else:
+                self.tui.show_info_screen("Password Required", 
+                                        ["ERROR: Root password is required!", 
+                                         "Please enter a password."], 
+                                        step=4, total_steps=6)
+        
+        # User password
+        while True:
+            self.config['user_password'] = self.tui.show_password_input("Security Configuration", 
+                                                                       f"Enter password for {self.config['username']}:", 
+                                                                       step=4, total_steps=6)
+            if self.config['user_password']:
+                # Confirm password
+                confirm_password = self.tui.show_password_input("Security Configuration", 
+                                                               f"Confirm password for {self.config['username']}:", 
+                                                               step=4, total_steps=6)
+                if self.config['user_password'] == confirm_password:
+                    break
+                else:
+                    self.tui.show_info_screen("Password Mismatch", 
+                                            ["ERROR: Passwords do not match!", 
+                                             "Please try again."], 
+                                            step=4, total_steps=6)
+            else:
+                self.tui.show_info_screen("Password Required", 
+                                        ["ERROR: User password is required!", 
+                                         "Please enter a password."], 
+                                        step=4, total_steps=6)
+        
         return True
     
     def installation_summary(self):
@@ -317,7 +363,7 @@ class ArchInstaller:
             self.tui.show_progress("System Configuration", steps, step=7, total_steps=8)
             
             # Setup users
-            if not setup_users(self.config['username']):
+            if not setup_users(self.config['username'], self.config['root_password'], self.config['user_password']):
                 raise Exception("Failed to setup users")
             
             steps[3] = ("Users and passwords configured", "completed")

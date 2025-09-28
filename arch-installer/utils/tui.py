@@ -168,6 +168,35 @@ class TUI:
             if result or not default:
                 return result
     
+    def show_password_input(self, title, prompt, step=None, total_steps=None):
+        """Show password input dialog with hidden characters"""
+        import getpass
+        
+        self.draw_header(title, step, total_steps)
+        
+        # Draw prompt
+        start_y = 4
+        self.safe_addstr(start_y, 2, prompt)
+        self.safe_addstr(start_y + 2, 2, "Password will be hidden as you type")
+        self.safe_addstr(start_y + 4, 2, "> ")
+        
+        self.draw_footer("Type password, Enter to finish")
+        self.stdscr.refresh()
+        
+        # Temporarily exit curses to use getpass
+        curses.endwin()
+        
+        try:
+            password = getpass.getpass("")
+            return password
+        finally:
+            # Reinitialize curses
+            self.stdscr = curses.initscr()
+            curses.noecho()
+            curses.cbreak()
+            self.stdscr.keypad(True)
+            curses.curs_set(0)
+    
     def show_confirmation(self, title, message, default=True, step=None, total_steps=None):
         """Show yes/no confirmation dialog"""
         options = ["Yes", "No"]
@@ -267,6 +296,8 @@ class TUI:
             f"Username:        {config.get('username', 'user')}",
             f"Timezone:        {config.get('timezone', 'UTC')}",
             f"Locale:          {config.get('locale', 'en_US.UTF-8')}",
+            f"Root Password:   {'Set' if config.get('root_password') else 'Not set'}",
+            f"User Password:   {'Set' if config.get('user_password') else 'Not set'}",
             "",
             "WARNING: This will PERMANENTLY ERASE the selected disk!"
         ]
