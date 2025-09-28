@@ -128,19 +128,7 @@ echo
 echo -e "${BLUE}📍 Installer location: ${TEMP_DIR}/arch-installer${NC}"
 echo
 
-# Ask for confirmation
-read -p "Start the Arch Linux installer now? (y/N): " -n 1 -r
+echo -e "${GREEN}🚀 Starting installer automatically...${NC}"
 echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo -e "${GREEN}🚀 Starting installer...${NC}"
-    echo
-    cd arch-installer
-    exec $PYTHON_CMD main.py
-else
-    echo -e "${YELLOW}📝 To run the installer later:${NC}"
-    echo -e "${BLUE}   cd ${TEMP_DIR}/arch-installer${NC}"
-    echo -e "${BLUE}   $PYTHON_CMD main.py${NC}"
-    echo
-    echo -e "${YELLOW}📝 To clean up temporary files:${NC}"
-    echo -e "${BLUE}   rm -rf ${TEMP_DIR}${NC}"
-fi
+cd arch-installer
+exec $PYTHON_CMD main.py

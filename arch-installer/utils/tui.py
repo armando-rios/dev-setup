@@ -71,7 +71,7 @@ class TUI:
         # Draw separator
         self.safe_addstr(1, 0, "─" * self.width)
         
-    def draw_footer(self, instructions="Use ↑↓ arrows, Enter to select, q to quit"):
+    def draw_footer(self, instructions="Use ↑↓/jk arrows, Enter to select, q to quit"):
         """Draw footer with instructions"""
         footer_y = self.height - 1
         self.safe_addstr(footer_y, 2, instructions)
@@ -121,9 +121,10 @@ class TUI:
             # Handle input
             key = self.stdscr.getch()
             
-            if key == curses.KEY_UP and selected > 0:
+            # Navigation: both arrow keys and vim-like keys
+            if (key == curses.KEY_UP or key == ord('k')) and selected > 0:
                 selected -= 1
-            elif key == curses.KEY_DOWN and selected < len(options) - 1:
+            elif (key == curses.KEY_DOWN or key == ord('j')) and selected < len(options) - 1:
                 selected += 1
             elif key == ord('\n') or key == ord(' '):
                 return selected
@@ -190,15 +191,16 @@ class TUI:
                 else:
                     self.safe_addstr(option_y, x, f" {option} ")
             
-            self.draw_footer("Use ←→ arrows, Enter to select")
+            self.draw_footer("Use ←→/hl arrows, Enter to select")
             self.stdscr.refresh()
             
             # Handle input
             key = self.stdscr.getch()
             
-            if key == curses.KEY_LEFT and selected > 0:
+            # Navigation: both arrow keys and vim-like keys
+            if (key == curses.KEY_LEFT or key == ord('h')) and selected > 0:
                 selected -= 1
-            elif key == curses.KEY_RIGHT and selected < len(options) - 1:
+            elif (key == curses.KEY_RIGHT or key == ord('l')) and selected < len(options) - 1:
                 selected += 1
             elif key == ord('\n'):
                 return selected == 0
