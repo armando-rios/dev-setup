@@ -87,12 +87,13 @@ def setup_aur_helper(username):
     """Install and configure yay AUR helper (exactamente como en setup.sh)"""
     print("Setting up yay AUR helper...")
     
-    # Usar directorio temporal para compilación
-    if not chroot_command("cd /tmp"):
+    # Ensure git and base-devel are installed first
+    if not install_packages(['git', 'base-devel']):
+        print("Failed to install git and base-devel")
         return False
     
     # Limpiar instalación previa si existe
-    chroot_command("rm -rf yay")
+    chroot_command("rm -rf /tmp/yay")
     
     # Clonar y compilar yay (exacto del setup.sh)
     print("Cloning yay repository...")
