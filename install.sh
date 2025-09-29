@@ -106,6 +106,9 @@ mkdir -p arch-installer/utils
 # Download main files
 download_file "${BASE_URL}/arch-installer/main.py" "arch-installer/main.py" "main installer"
 download_file "${BASE_URL}/arch-installer/utils/__init__.py" "arch-installer/utils/__init__.py" "utils module"
+download_file "${BASE_URL}/arch-installer/utils/config.py" "arch-installer/utils/config.py" "configuration constants"
+download_file "${BASE_URL}/arch-installer/utils/packages.py" "arch-installer/utils/packages.py" "package definitions"
+download_file "${BASE_URL}/arch-installer/utils/validators.py" "arch-installer/utils/validators.py" "input validators"
 download_file "${BASE_URL}/arch-installer/utils/system.py" "arch-installer/utils/system.py" "system utilities"
 download_file "${BASE_URL}/arch-installer/utils/disk.py" "arch-installer/utils/disk.py" "disk utilities"
 download_file "${BASE_URL}/arch-installer/utils/chroot.py" "arch-installer/utils/chroot.py" "chroot utilities"

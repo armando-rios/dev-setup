@@ -112,25 +112,28 @@ class ArchInstaller:
         
         return True
     
-    def basic_config(self):
-        """Get basic system configuration"""
-        # Hostname
-        self.config['hostname'] = self.tui.show_text_input("System Configuration", 
-                                                          "Enter hostname:", 
-                                                          default="arch",
-                                                          step=4, total_steps=12)
-        if not self.config['hostname']:
-            return False
-        
-        # Username
-        self.config['username'] = self.tui.show_text_input("System Configuration", 
-                                                          "Enter username:", 
-                                                          default="user",
-                                                          step=4, total_steps=12)
-        if not self.config['username']:
-            return False
-        
-        # Timezone
+    def get_hostname(self):
+        """Get hostname from user"""
+        hostname = self.tui.show_text_input("System Configuration", 
+                                           "Enter hostname:", 
+                                           default="arch",
+                                           step=4, total_steps=12)
+        if not hostname:
+            return None
+        return hostname
+    
+    def get_username(self):
+        """Get username from user"""
+        username = self.tui.show_text_input("System Configuration", 
+                                           "Enter username:", 
+                                           default="user",
+                                           step=4, total_steps=12)
+        if not username:
+            return None
+        return username
+    
+    def get_timezone(self):
+        """Get timezone selection from user"""
         timezone_options = [
             "America/New_York (Eastern)",
             "America/Chicago (Central)", 
@@ -144,20 +147,21 @@ class ArchInstaller:
         
         tz_choice = self.tui.show_menu("Select Timezone", timezone_options, step=4, total_steps=12)
         if tz_choice == -1:
-            return False
+            return None
         
         if tz_choice == len(timezone_options) - 1:  # Custom
-            self.config['timezone'] = self.tui.show_text_input("Custom Timezone", 
-                                                              "Enter timezone (e.g., Europe/Madrid):", 
-                                                              step=4, total_steps=12)
+            return self.tui.show_text_input("Custom Timezone", 
+                                          "Enter timezone (e.g., Europe/Madrid):", 
+                                          step=4, total_steps=12)
         else:
             tz_map = [
                 "America/New_York", "America/Chicago", "America/Denver", 
                 "America/Los_Angeles", "Europe/London", "Europe/Berlin", "Asia/Tokyo"
             ]
-            self.config['timezone'] = tz_map[tz_choice]
-        
-        # Locale
+            return tz_map[tz_choice]
+    
+    def get_locale(self):
+        """Get locale selection from user"""
         locale_options = [
             "en_US.UTF-8 (English - US)",
             "en_GB.UTF-8 (English - UK)", 
@@ -168,27 +172,29 @@ class ArchInstaller:
         
         locale_choice = self.tui.show_menu("Select Locale", locale_options, step=4, total_steps=12)
         if locale_choice == -1:
-            return False
+            return None
         
         if locale_choice == len(locale_options) - 1:  # Custom
-            self.config['locale'] = self.tui.show_text_input("Custom Locale", 
-                                                            "Enter locale (e.g., de_DE.UTF-8):", 
-                                                            step=4, total_steps=12)
+            return self.tui.show_text_input("Custom Locale", 
+                                          "Enter locale (e.g., de_DE.UTF-8):", 
+                                          step=4, total_steps=12)
         else:
             locale_map = ["en_US.UTF-8", "en_GB.UTF-8", "es_ES.UTF-8", "es_MX.UTF-8"]
-            self.config['locale'] = locale_map[locale_choice]
-        
+            return locale_map[locale_choice]
+    
+    def get_passwords(self):
+        """Get root and user passwords from user"""
         # Root password
         while True:
-            self.config['root_password'] = self.tui.show_password_input("Security Configuration", 
-                                                                       "Enter root password:", 
-                                                                       step=4, total_steps=12)
-            if self.config['root_password']:
+            root_password = self.tui.show_password_input("Security Configuration", 
+                                                        "Enter root password:", 
+                                                        step=4, total_steps=12)
+            if root_password:
                 # Confirm password
                 confirm_password = self.tui.show_password_input("Security Configuration", 
-                                                               "Confirm root password:", 
-                                                               step=4, total_steps=12)
-                if self.config['root_password'] == confirm_password:
+                                                              "Confirm root password:", 
+                                                              step=4, total_steps=12)
+                if root_password == confirm_password:
                     break
                 else:
                     self.tui.show_info_screen("Password Mismatch", 
@@ -203,15 +209,15 @@ class ArchInstaller:
         
         # User password
         while True:
-            self.config['user_password'] = self.tui.show_password_input("Security Configuration", 
-                                                                       f"Enter password for {self.config['username']}:", 
-                                                                       step=4, total_steps=12)
-            if self.config['user_password']:
+            user_password = self.tui.show_password_input("Security Configuration", 
+                                                        f"Enter password for {self.config['username']}:", 
+                                                        step=4, total_steps=12)
+            if user_password:
                 # Confirm password
                 confirm_password = self.tui.show_password_input("Security Configuration", 
-                                                               f"Confirm password for {self.config['username']}:", 
-                                                               step=4, total_steps=12)
-                if self.config['user_password'] == confirm_password:
+                                                              f"Confirm password for {self.config['username']}:", 
+                                                              step=4, total_steps=12)
+                if user_password == confirm_password:
                     break
                 else:
                     self.tui.show_info_screen("Password Mismatch", 
@@ -223,6 +229,35 @@ class ArchInstaller:
                                         ["ERROR: User password is required!", 
                                          "Please enter a password."], 
                                         step=4, total_steps=12)
+        
+        return root_password, user_password
+    
+    def basic_config(self):
+        """Get basic system configuration"""
+        # Get hostname
+        self.config['hostname'] = self.get_hostname()
+        if not self.config['hostname']:
+            return False
+        
+        # Get username
+        self.config['username'] = self.get_username()
+        if not self.config['username']:
+            return False
+        
+        # Get timezone
+        self.config['timezone'] = self.get_timezone()
+        if not self.config['timezone']:
+            return False
+        
+        # Get locale
+        self.config['locale'] = self.get_locale()
+        if not self.config['locale']:
+            return False
+        
+        # Get passwords
+        root_password, user_password = self.get_passwords()
+        self.config['root_password'] = root_password
+        self.config['user_password'] = user_password
         
         return True
     

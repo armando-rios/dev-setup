@@ -106,13 +106,7 @@ def enable_services():
     """Enable necessary system services"""
     print("Enabling system services...")
     
-    services = [
-        'sddm',           # Display manager
-        'NetworkManager', # Network management  
-        'seatd'           # Session management
-    ]
-    
-    for service in services:
+    for service in SYSTEM_SERVICES:
         print(f"Enabling {service}...")
         if not chroot_command(f"systemctl enable {service}"):
             print(f"Failed to enable {service}")
