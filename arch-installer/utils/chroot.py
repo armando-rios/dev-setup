@@ -140,6 +140,13 @@ def setup_users(username, root_password, user_password):
         print("Failed to configure sudo")
         return False
     
+    # Add NOPASSWD for AUR installation (pacman and makepkg)
+    print("Configuring NOPASSWD for AUR installation...")
+    nopasswd_cmd = "bash -c \\\"echo '%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/makepkg' >> /etc/sudoers\\\""
+    if not chroot_command(nopasswd_cmd):
+        print("Failed to configure NOPASSWD")
+        return False
+    
     print("Users configured successfully")
     return True
 

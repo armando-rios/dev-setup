@@ -162,8 +162,6 @@ def enable_services():
     services = [
         'sddm',           # Display manager
         'NetworkManager', # Network management  
-        'pipewire',       # Audio server
-        'wireplumber',    # Audio session manager
         'seatd'           # Session management
     ]
     
