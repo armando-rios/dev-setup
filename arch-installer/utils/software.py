@@ -93,23 +93,23 @@ def setup_aur_helper(username):
         return False
     
     # Limpiar instalación previa si existe
-    chroot_command("rm -rf /tmp/yay")
+    chroot_command(f"rm -rf /home/{username}/yay")
     
     # Clonar y compilar yay (exacto del setup.sh)
     print("Cloning yay repository...")
-    if not chroot_command(f"sudo -u {username} git clone https://aur.archlinux.org/yay.git /tmp/yay"):
+    if not chroot_command(f"sudo -u {username} git clone https://aur.archlinux.org/yay.git /home/{username}/yay"):
         print("Failed to clone yay repository")
         return False
     
     # Build and install yay
     print("Building and installing yay...")
-    build_cmd = f"sudo -u {username} bash -c 'cd /tmp/yay && makepkg -si --noconfirm'"
+    build_cmd = f"sudo -u {username} bash -c \\\"cd /home/{username}/yay && makepkg -si --noconfirm\\\""
     if not chroot_command(build_cmd):
         print("Failed to build yay")
         return False
     
     # Limpiar directorio temporal
-    chroot_command("rm -rf /tmp/yay")
+    chroot_command(f"rm -rf /home/{username}/yay")
     
     print("yay AUR helper installed successfully")
     return True
