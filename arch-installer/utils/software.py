@@ -25,7 +25,7 @@ def install_packages(packages, use_aur=False, username=None):
 
 
 def install_essential_packages():
-    """Install essential packages from setup.sh + requested additions"""
+    """Install essential packages organized by category"""
     print("Installing essential packages...")
     
     essential_packages = [
@@ -98,7 +98,7 @@ def install_amd_graphics_drivers():
 
 
 def setup_aur_helper(username):
-    """Install and configure yay AUR helper (exactamente como en setup.sh)"""
+    """Install and configure yay AUR helper"""
     print("Setting up yay AUR helper...")
     
     # Ensure git and base-devel are installed first
@@ -109,7 +109,7 @@ def setup_aur_helper(username):
     # Limpiar instalación previa si existe
     chroot_command(f"rm -rf /home/{username}/yay")
     
-    # Clonar y compilar yay (exacto del setup.sh)
+    # Clone and compile yay
     print("Cloning yay repository...")
     if not chroot_command(f"sudo -u {username} git clone https://aur.archlinux.org/yay.git /home/{username}/yay"):
         print("Failed to clone yay repository")
@@ -130,7 +130,7 @@ def setup_aur_helper(username):
 
 
 def install_aur_packages(username):
-    """Install AUR packages from setup.sh"""
+    """Install AUR packages"""
     print("Installing AUR packages...")
     
     aur_packages = [
@@ -143,10 +143,10 @@ def install_aur_packages(username):
 
 
 def install_ohmyzsh(username):
-    """Install oh-my-zsh (exactamente como en setup.sh)"""
+    """Install oh-my-zsh"""
     print("Installing oh-my-zsh...")
     
-    # Exacto del setup.sh
+    # Clone oh-my-zsh repository
     omz_cmd = f"sudo -u {username} git clone https://github.com/ohmyzsh/ohmyzsh /home/{username}/.oh-my-zsh"
     if not chroot_command(omz_cmd):
         print("Failed to install oh-my-zsh")
@@ -157,7 +157,7 @@ def install_ohmyzsh(username):
 
 
 def change_shell_to_zsh(username):
-    """Change default shell to zsh (como en setup.sh)"""
+    """Change default shell to zsh"""
     print("Changing default shell to zsh...")
     
     if not chroot_command(f"chsh -s $(which zsh) {username}"):
