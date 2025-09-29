@@ -28,39 +28,53 @@ def install_essential_packages():
     """Install essential packages from setup.sh + requested additions"""
     print("Installing essential packages...")
     
-    # Paquetes exactos del setup.sh + los solicitados
     essential_packages = [
-        # Del setup.sh
+        # Development tools
         'git',
         'base-devel',
-        'nvm', 
+        'gcc',
         'neovim',
         'ripgrep',
         'fzf',
-        'gcc',
-        'waybar',
-        'hyprpaper',
-        'hyprsunset',
-        'swaync',
-        'zsh',
-        'ghostty',
-        'lsd',
-        'ttf-jetbrains-mono-nerd',
-        'discord',
         'lazygit',
         'unzip',
         'stow',
         
-        # Solicitados por el usuario
+        # Shell and terminal
+        'zsh',
+        'nvm',
+        'lsd',
+        'kitty',
+        'zoxide',
+        
+        # Wayland/Hyprland
+        'hyprland',
+        'waybar',
+        'hyprpaper',
+        'hyprsunset',
+        'swaync',
+        'wofi',
+        
+        # System services
+        'sddm',
         'network-manager-applet',
         'wireless_tools',
-        'hyprland',
-        'sddm',
+        'seatd',
+        
+        # Audio
         'pipewire',
         'pipewire-audio',
         'pipewire-pulse', 
         'wireplumber',
-        'seatd'
+        
+        # Applications
+        'ghostty',
+        'discord',
+        'zed',
+        'nwg-look',
+        
+        # Fonts
+        'ttf-jetbrains-mono-nerd'
     ]
     
     return install_packages(essential_packages)
@@ -119,11 +133,11 @@ def install_aur_packages(username):
     """Install AUR packages from setup.sh"""
     print("Installing AUR packages...")
     
-    # Paquetes AUR exactos del setup.sh
     aur_packages = [
         'zen-browser-bin',
         'wshowkeys-mao-git', 
-        'hyprshot'
+        'hyprshot',
+        'catppuccin-gtk-theme-mocha'
     ]
     
     return install_packages(aur_packages, use_aur=True, username=username)
