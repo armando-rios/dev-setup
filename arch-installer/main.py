@@ -10,6 +10,7 @@ from utils.system import check_internet_connection, is_uefi, sync_clock, get_ava
 from utils.disk import create_uefi_partitions, create_bios_partitions, format_partitions, mount_partitions, generate_fstab, cleanup_disk
 from utils.chroot import setup_timezone, setup_locales, setup_hostname, setup_network, setup_users, setup_bootloader
 from utils.software import phase3_install_essential_software
+from utils.dotfiles import phase4_dotfiles_and_development
 from utils.tui import TUI
 
 
@@ -33,7 +34,7 @@ class ArchInstaller:
             "⚠️  WARNING: This will format your selected disk!"
         ]
         
-        self.tui.show_info_screen("Welcome", lines, step=1, total_steps=9)
+        self.tui.show_info_screen("Welcome", lines, step=1, total_steps=12)
         
         if not self.tui.show_confirmation("Start Installation", 
                                         "Are you ready to begin the installation?", 
@@ -49,21 +50,21 @@ class ArchInstaller:
             ("Detecting system type...", "pending")
         ]
         
-        self.tui.show_progress("System Checks", steps, step=2, total_steps=9)
+        self.tui.show_progress("System Checks", steps, step=2, total_steps=12)
         time.sleep(1)
         
         # Check internet
         if not check_internet_connection():
             steps[0] = ("Internet connection check", "error")
-            self.tui.show_progress("System Checks", steps, step=2, total_steps=9)
+            self.tui.show_progress("System Checks", steps, step=2, total_steps=12)
             self.tui.show_info_screen("Error", ["ERROR: No internet connection detected!",
                                                "Please connect to the internet and try again."], 
-                                    step=2, total_steps=9)
+                                    step=2, total_steps=12)
             return False
         
         steps[0] = ("Internet connection verified", "completed")
         steps[1] = ("Synchronizing system clock...", "current")
-        self.tui.show_progress("System Checks", steps, step=2, total_steps=9)
+        self.tui.show_progress("System Checks", steps, step=2, total_steps=12)
         time.sleep(1)
         
         # Sync clock
@@ -73,7 +74,7 @@ class ArchInstaller:
             steps[1] = ("Clock sync failed (continuing anyway)", "completed")
         
         steps[2] = ("Detecting system type...", "current")
-        self.tui.show_progress("System Checks", steps, step=2, total_steps=9)
+        self.tui.show_progress("System Checks", steps, step=2, total_steps=12)
         time.sleep(1)
         
         # Detect system type
@@ -81,7 +82,7 @@ class ArchInstaller:
         system_type = "UEFI" if self.config['uefi'] else "BIOS"
         steps[2] = (f"System type detected: {system_type}", "completed")
         
-        self.tui.show_progress("System Checks", steps, step=2, total_steps=9)
+        self.tui.show_progress("System Checks", steps, step=2, total_steps=12)
         time.sleep(1)
         
         return True
@@ -90,12 +91,12 @@ class ArchInstaller:
         """Let user select installation disk"""
         disks = get_available_disks()
         if not disks:
-            self.tui.show_info_screen("Error", ["ERROR: No disks found!"], step=3, total_steps=9)
+            self.tui.show_info_screen("Error", ["ERROR: No disks found!"], step=3, total_steps=12)
             return False
         
         disk_options = [f"{disk['name']} - {disk['size']} ({disk['model']})" for disk in disks]
         
-        choice = self.tui.show_menu("Disk Selection", disk_options, step=3, total_steps=9)
+        choice = self.tui.show_menu("Disk Selection", disk_options, step=3, total_steps=12)
         if choice == -1:
             return False
         
@@ -117,7 +118,7 @@ class ArchInstaller:
         self.config['hostname'] = self.tui.show_text_input("System Configuration", 
                                                           "Enter hostname:", 
                                                           default="arch",
-                                                          step=4, total_steps=9)
+                                                          step=4, total_steps=12)
         if not self.config['hostname']:
             return False
         
@@ -125,7 +126,7 @@ class ArchInstaller:
         self.config['username'] = self.tui.show_text_input("System Configuration", 
                                                           "Enter username:", 
                                                           default="user",
-                                                          step=4, total_steps=9)
+                                                          step=4, total_steps=12)
         if not self.config['username']:
             return False
         
@@ -141,14 +142,14 @@ class ArchInstaller:
             "Custom timezone"
         ]
         
-        tz_choice = self.tui.show_menu("Select Timezone", timezone_options, step=4, total_steps=9)
+        tz_choice = self.tui.show_menu("Select Timezone", timezone_options, step=4, total_steps=12)
         if tz_choice == -1:
             return False
         
         if tz_choice == len(timezone_options) - 1:  # Custom
             self.config['timezone'] = self.tui.show_text_input("Custom Timezone", 
                                                               "Enter timezone (e.g., Europe/Madrid):", 
-                                                              step=4, total_steps=9)
+                                                              step=4, total_steps=12)
         else:
             tz_map = [
                 "America/New_York", "America/Chicago", "America/Denver", 
@@ -165,14 +166,14 @@ class ArchInstaller:
             "Custom locale"
         ]
         
-        locale_choice = self.tui.show_menu("Select Locale", locale_options, step=4, total_steps=9)
+        locale_choice = self.tui.show_menu("Select Locale", locale_options, step=4, total_steps=12)
         if locale_choice == -1:
             return False
         
         if locale_choice == len(locale_options) - 1:  # Custom
             self.config['locale'] = self.tui.show_text_input("Custom Locale", 
                                                             "Enter locale (e.g., de_DE.UTF-8):", 
-                                                            step=4, total_steps=9)
+                                                            step=4, total_steps=12)
         else:
             locale_map = ["en_US.UTF-8", "en_GB.UTF-8", "es_ES.UTF-8", "es_MX.UTF-8"]
             self.config['locale'] = locale_map[locale_choice]
@@ -181,53 +182,53 @@ class ArchInstaller:
         while True:
             self.config['root_password'] = self.tui.show_password_input("Security Configuration", 
                                                                        "Enter root password:", 
-                                                                       step=4, total_steps=9)
+                                                                       step=4, total_steps=12)
             if self.config['root_password']:
                 # Confirm password
                 confirm_password = self.tui.show_password_input("Security Configuration", 
                                                                "Confirm root password:", 
-                                                               step=4, total_steps=9)
+                                                               step=4, total_steps=12)
                 if self.config['root_password'] == confirm_password:
                     break
                 else:
                     self.tui.show_info_screen("Password Mismatch", 
                                             ["ERROR: Passwords do not match!", 
                                              "Please try again."], 
-                                            step=4, total_steps=9)
+                                            step=4, total_steps=12)
             else:
                 self.tui.show_info_screen("Password Required", 
                                         ["ERROR: Root password is required!", 
                                          "Please enter a password."], 
-                                        step=4, total_steps=9)
+                                        step=4, total_steps=12)
         
         # User password
         while True:
             self.config['user_password'] = self.tui.show_password_input("Security Configuration", 
                                                                        f"Enter password for {self.config['username']}:", 
-                                                                       step=4, total_steps=9)
+                                                                       step=4, total_steps=12)
             if self.config['user_password']:
                 # Confirm password
                 confirm_password = self.tui.show_password_input("Security Configuration", 
                                                                f"Confirm password for {self.config['username']}:", 
-                                                               step=4, total_steps=9)
+                                                               step=4, total_steps=12)
                 if self.config['user_password'] == confirm_password:
                     break
                 else:
                     self.tui.show_info_screen("Password Mismatch", 
                                             ["ERROR: Passwords do not match!", 
                                              "Please try again."], 
-                                            step=4, total_steps=9)
+                                            step=4, total_steps=12)
             else:
                 self.tui.show_info_screen("Password Required", 
                                         ["ERROR: User password is required!", 
                                          "Please enter a password."], 
-                                        step=4, total_steps=9)
+                                        step=4, total_steps=12)
         
         return True
     
     def installation_summary(self):
         """Show installation summary and confirm"""
-        return self.tui.show_summary("Installation Summary", self.config, step=5, total_steps=9)
+        return self.tui.show_summary("Installation Summary", self.config, step=5, total_steps=12)
     
     def install_system(self):
         """Perform the actual installation"""
@@ -241,7 +242,7 @@ class ArchInstaller:
         
         try:
             # Clean up disk first
-            self.tui.show_progress("Installing System", steps, step=6, total_steps=9)
+            self.tui.show_progress("Installing System", steps, step=6, total_steps=12)
             
             if not cleanup_disk(self.config['disk']):
                 raise Exception("Failed to clean up disk")
@@ -257,7 +258,7 @@ class ArchInstaller:
             
             steps[0] = ("Disk partitions created", "completed")
             steps[1] = ("Formatting partitions...", "current")
-            self.tui.show_progress("Installing System", steps, step=6, total_steps=9)
+            self.tui.show_progress("Installing System", steps, step=6, total_steps=12)
             
             # Format partitions
             if not format_partitions(self.config['disk'], self.config['uefi']):
@@ -265,7 +266,7 @@ class ArchInstaller:
             
             steps[1] = ("Partitions formatted", "completed")
             steps[2] = ("Mounting partitions...", "current")
-            self.tui.show_progress("Installing System", steps, step=6, total_steps=9)
+            self.tui.show_progress("Installing System", steps, step=6, total_steps=12)
             
             # Mount partitions
             if not mount_partitions(self.config['disk'], self.config['uefi']):
@@ -273,7 +274,7 @@ class ArchInstaller:
             
             steps[2] = ("Partitions mounted", "completed")
             steps[3] = ("Installing base system (this may take a while)...", "current")
-            self.tui.show_progress("Installing System", steps, step=6, total_steps=9)
+            self.tui.show_progress("Installing System", steps, step=6, total_steps=12)
             
             # Install base system
             install_cmd = "pacstrap /mnt base linux linux-firmware networkmanager grub efibootmgr wpa_supplicant dialog vim sudo"
@@ -282,14 +283,14 @@ class ArchInstaller:
             
             steps[3] = ("Base system installed", "completed")
             steps[4] = ("Generating filesystem table...", "current")
-            self.tui.show_progress("Installing System", steps, step=6, total_steps=9)
+            self.tui.show_progress("Installing System", steps, step=6, total_steps=12)
             
             # Generate fstab
             if not generate_fstab():
                 raise Exception("Failed to generate fstab")
             
             steps[4] = ("Filesystem table created", "completed")
-            self.tui.show_progress("Installing System", steps, step=6, total_steps=9)
+            self.tui.show_progress("Installing System", steps, step=6, total_steps=12)
             
             time.sleep(2)  # Let user see completion
             return True
@@ -301,8 +302,8 @@ class ArchInstaller:
                     error_steps[i] = (f"{desc} FAILED", "error")
                     break
             
-            self.tui.show_progress("Installation Failed", error_steps, step=6, total_steps=9)
-            self.tui.show_info_screen("Error", [f"ERROR: {str(e)}"], step=6, total_steps=9)
+            self.tui.show_progress("Installation Failed", error_steps, step=6, total_steps=12)
+            self.tui.show_info_screen("Error", [f"ERROR: {str(e)}"], step=6, total_steps=12)
             return False
     
     def completion(self):
@@ -325,7 +326,7 @@ class ArchInstaller:
             "The installation will continue automatically..."
         ]
         
-        self.tui.show_info_screen("Installation Complete", lines, step=6, total_steps=9)
+        self.tui.show_info_screen("Installation Complete", lines, step=6, total_steps=12)
     
     def phase2_system_configuration(self):
         """Phase 2: System configuration with chroot"""
@@ -339,14 +340,14 @@ class ArchInstaller:
         
         try:
             # Setup timezone
-            self.tui.show_progress("System Configuration", steps, step=7, total_steps=9)
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=12)
             
             if not setup_timezone(self.config['timezone']):
                 raise Exception("Failed to setup timezone")
             
             steps[0] = ("Timezone configured", "completed")
             steps[1] = ("Configuring locales...", "current")
-            self.tui.show_progress("System Configuration", steps, step=7, total_steps=9)
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=12)
             
             # Setup locales
             if not setup_locales(self.config['locale']):
@@ -354,7 +355,7 @@ class ArchInstaller:
             
             steps[1] = ("Locales configured", "completed")
             steps[2] = ("Setting hostname and network...", "current")
-            self.tui.show_progress("System Configuration", steps, step=7, total_steps=9)
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=12)
             
             # Setup hostname and network
             if not setup_hostname(self.config['hostname']):
@@ -365,7 +366,7 @@ class ArchInstaller:
             
             steps[2] = ("Hostname and network configured", "completed")
             steps[3] = ("Creating users and passwords...", "current")
-            self.tui.show_progress("System Configuration", steps, step=7, total_steps=9)
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=12)
             
             # Setup users
             if not setup_users(self.config['username'], self.config['root_password'], self.config['user_password']):
@@ -373,14 +374,14 @@ class ArchInstaller:
             
             steps[3] = ("Users and passwords configured", "completed")
             steps[4] = ("Installing bootloader...", "current")
-            self.tui.show_progress("System Configuration", steps, step=7, total_steps=9)
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=12)
             
             # Setup bootloader
             if not setup_bootloader(self.config['uefi'], self.config['disk']):
                 raise Exception("Failed to setup bootloader")
             
             steps[4] = ("Bootloader installed", "completed")
-            self.tui.show_progress("System Configuration", steps, step=7, total_steps=9)
+            self.tui.show_progress("System Configuration", steps, step=7, total_steps=12)
             
             time.sleep(2)
             return True
@@ -392,8 +393,8 @@ class ArchInstaller:
                     error_steps[i] = (f"{desc} FAILED", "error")
                     break
             
-            self.tui.show_progress("Configuration Failed", error_steps, step=7, total_steps=9)
-            self.tui.show_info_screen("Error", [f"ERROR: {str(e)}"], step=7, total_steps=9)
+            self.tui.show_progress("Configuration Failed", error_steps, step=7, total_steps=12)
+            self.tui.show_info_screen("Error", [f"ERROR: {str(e)}"], step=7, total_steps=12)
             return False
     
     def phase2_completion(self):
@@ -416,7 +417,7 @@ class ArchInstaller:
             "System installation completed successfully!"
         ]
         
-        self.tui.show_info_screen("Phase 2 Complete!", lines, step=8, total_steps=9)
+        self.tui.show_info_screen("Phase 2 Complete!", lines, step=8, total_steps=12)
     
     def phase3_software_installation(self):
         """Phase 3: Install essential software"""
@@ -444,7 +445,34 @@ class ArchInstaller:
             "System ready for desktop use!"
         ]
         
-        self.tui.show_info_screen("Software Installation Complete!", lines, step=9, total_steps=9)
+        self.tui.show_info_screen("Software Installation Complete!", lines, step=9, total_steps=12)
+    
+    def phase4_dotfiles_setup(self):
+        """Phase 4: Setup dotfiles and development environment"""
+        if not phase4_dotfiles_and_development(self.config['username']):
+            return False
+        return True
+    
+    def phase4_completion(self):
+        """Show Phase 4 completion message"""
+        lines = [
+            "🎉 Phase 4 Dotfiles & Development Complete!",
+            "",
+            "📋 Development environment ready:",
+            "  ✓ Personal dotfiles cloned and linked",
+            "  ✓ Configuration files (hypr, nvim, zsh, etc.)",
+            "  ✓ Node.js LTS installed with nvm", 
+            "  ✓ Bun.js runtime installed",
+            "  ✓ SSH keys and shell configuration",
+            "",
+            "🔄 Next phases will include:",
+            "  • Additional development tools",
+            "  • Final system optimizations",
+            "",
+            "Development environment fully configured!"
+        ]
+        
+        self.tui.show_info_screen("Development Setup Complete!", lines, step=12, total_steps=12)
     
     def run(self):
         """Run the installer"""
@@ -480,6 +508,11 @@ class ArchInstaller:
                 return
             
             self.phase3_completion()
+            
+            if not self.phase4_dotfiles_setup():
+                return
+            
+            self.phase4_completion()
             
         except KeyboardInterrupt:
             pass
