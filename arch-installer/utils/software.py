@@ -52,7 +52,7 @@ def install_essential_packages():
         'stow',
         
         # Solicitados por el usuario
-        'networkmanager-applet',
+        'network-manager-applet',
         'wireless_tools',
         'hyprland',
         'sddm',
