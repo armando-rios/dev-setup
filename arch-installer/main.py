@@ -275,7 +275,7 @@ class ArchInstaller:
             self.tui.show_progress("Installing System", steps, step=6, total_steps=6)
             
             # Install base system
-            install_cmd = "pacstrap /mnt base linux linux-firmware networkmanager grub wpa_supplicant dialog vim sudo"
+            install_cmd = "pacstrap /mnt base linux linux-firmware networkmanager grub efibootmgr wpa_supplicant dialog vim sudo"
             if not run_command(install_cmd, capture_output=False):
                 raise Exception("Failed to install base system")
             
