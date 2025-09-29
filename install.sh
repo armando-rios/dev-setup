@@ -137,4 +137,4 @@ echo
 echo -e "${GREEN}🚀 Starting installer automatically...${NC}"
 echo
 cd arch-installer
-exec $PYTHON_CMD main.py
+exec $PYTHON_CMD main.py < /dev/tty
