@@ -136,8 +136,7 @@ def install_aur_packages(username):
     aur_packages = [
         'zen-browser-bin',
         'wshowkeys-mao-git', 
-        'hyprshot',
-        'catppuccin-gtk-theme-mocha'
+        'hyprshot'
     ]
     
     return install_packages(aur_packages, use_aur=True, username=username)
