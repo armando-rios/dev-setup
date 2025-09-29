@@ -3,7 +3,7 @@
 Software installation and configuration utilities for Arch Linux
 """
 
-from .chroot import chroot_command
+from .chroot import chroot_command, enable_nopasswd_for_installation, disable_nopasswd_after_installation
 from .system import run_command
 from .config import PACMAN_FLAGS, YAY_FLAGS, MAKEPKG_FLAGS, YAY_REPO, OH_MY_ZSH_REPO, HOME_PATH_TEMPLATE, SYSTEM_SERVICES
 from .packages import get_all_essential_packages, get_amd_graphics_packages, get_aur_packages
@@ -120,22 +120,36 @@ def phase3_install_essential_software(username):
     """Complete Phase 3: Install essential software"""
     print("=== Phase 3: Installing Essential Software ===")
     
-    steps = [
-        ("Installing essential packages", install_essential_packages),
-        ("Installing AMD graphics drivers", install_amd_graphics_drivers),
-        ("Setting up AUR helper (yay)", lambda: setup_aur_helper(username)),
-        ("Installing AUR packages", lambda: install_aur_packages(username)),
-        ("Installing oh-my-zsh", lambda: install_ohmyzsh(username)),
-        ("Changing shell to zsh", lambda: change_shell_to_zsh(username)),
-        ("Enabling system services", enable_services)
-    ]
+    # Enable temporary NOPASSWD for AUR installation
+    if not enable_nopasswd_for_installation():
+        print("ERROR: Failed to enable temporary NOPASSWD")
+        return False
     
-    for step_name, step_func in steps:
-        print(f"\n--- {step_name} ---")
-        if not step_func():
-            print(f"ERROR: Failed at step: {step_name}")
-            return False
-        print(f"✓ {step_name} completed successfully")
-    
-    print("\n=== Phase 3 completed successfully! ===")
-    return True
+    try:
+        steps = [
+            ("Installing essential packages", install_essential_packages),
+            ("Installing AMD graphics drivers", install_amd_graphics_drivers),
+            ("Setting up AUR helper (yay)", lambda: setup_aur_helper(username)),
+            ("Installing AUR packages", lambda: install_aur_packages(username)),
+            ("Installing oh-my-zsh", lambda: install_ohmyzsh(username)),
+            ("Changing shell to zsh", lambda: change_shell_to_zsh(username)),
+            ("Enabling system services", enable_services)
+        ]
+        
+        for step_name, step_func in steps:
+            print(f"\n--- {step_name} ---")
+            if not step_func():
+                print(f"ERROR: Failed at step: {step_name}")
+                return False
+            print(f"✓ {step_name} completed successfully")
+        
+        print("\n=== Phase 3 completed successfully! ===")
+        return True
+        
+    finally:
+        # Always remove NOPASSWD configuration regardless of success/failure
+        print("\n--- Securing system (removing temporary NOPASSWD) ---")
+        if not disable_nopasswd_after_installation():
+            print("WARNING: Failed to remove NOPASSWD configuration - please check /etc/sudoers manually")
+        else:
+            print("✓ System secured - NOPASSWD configuration removed")

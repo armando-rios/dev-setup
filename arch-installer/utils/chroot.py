@@ -152,14 +152,29 @@ def setup_users(username, root_password, user_password):
         print("Failed to configure sudo")
         return False
     
-    # Add NOPASSWD for AUR installation (pacman and makepkg)
-    print("Configuring NOPASSWD for AUR installation...")
+    print("Users configured successfully")
+    return True
+
+
+def enable_nopasswd_for_installation():
+    """Temporarily enable NOPASSWD for package installation during setup"""
+    print("Temporarily enabling NOPASSWD for AUR installation...")
     nopasswd_cmd = 'bash -c "echo \'%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/makepkg\' >> /etc/sudoers"'
     if not chroot_command(nopasswd_cmd):
-        print("Failed to configure NOPASSWD")
+        print("Failed to configure temporary NOPASSWD")
         return False
-    
-    print("Users configured successfully")
+    return True
+
+
+def disable_nopasswd_after_installation():
+    """Remove NOPASSWD configuration after installation is complete"""
+    print("Removing temporary NOPASSWD configuration...")
+    # Remove the NOPASSWD line we added
+    remove_cmd = "sed -i '/%wheel ALL=(ALL:ALL) NOPASSWD: \/usr\/bin\/pacman, \/usr\/bin\/makepkg/d' /etc/sudoers"
+    if not chroot_command(remove_cmd):
+        print("Warning: Failed to remove NOPASSWD configuration")
+        return False
+    print("NOPASSWD configuration removed successfully")
     return True
 
 
