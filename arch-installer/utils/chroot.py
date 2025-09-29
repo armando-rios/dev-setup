@@ -5,11 +5,12 @@ Chroot utilities for system configuration
 
 import subprocess
 from .system import run_command
+from .config import CHROOT_PATH
 
 
 def chroot_command(command):
     """Execute command in chroot environment"""
-    chroot_cmd = f"arch-chroot /mnt {command}"
+    chroot_cmd = f"arch-chroot {CHROOT_PATH} {command}"
     print(f"CHROOT: {chroot_cmd}")
     result = run_command(chroot_cmd, capture_output=False)
     if result:
@@ -17,6 +18,17 @@ def chroot_command(command):
     else:
         print("CHROOT: Command failed")
     return result
+
+
+def execute_step(description, command, error_msg=None):
+    """Execute a chroot step with consistent logging and error handling"""
+    print(f"{description}...")
+    if not chroot_command(command):
+        error_message = error_msg or f"Failed: {description}"
+        print(f"ERROR: {error_message}")
+        return False
+    print(f"✓ {description} completed successfully")
+    return True
 
 
 def setup_timezone(timezone):

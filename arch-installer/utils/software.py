@@ -5,6 +5,8 @@ Software installation and configuration utilities for Arch Linux
 
 from .chroot import chroot_command
 from .system import run_command
+from .config import PACMAN_FLAGS, YAY_FLAGS, MAKEPKG_FLAGS, YAY_REPO, OH_MY_ZSH_REPO, HOME_PATH_TEMPLATE, SYSTEM_SERVICES
+from .packages import get_all_essential_packages, get_amd_graphics_packages, get_aur_packages
 
 
 def install_packages(packages, use_aur=False, username=None):
@@ -16,85 +18,24 @@ def install_packages(packages, use_aur=False, username=None):
     
     if use_aur:
         # Use yay for AUR packages
-        cmd = f"sudo -u {username} yay -S --needed --noconfirm {packages_str}"
+        cmd = f"sudo -u {username} yay {YAY_FLAGS} {packages_str}"
         return chroot_command(cmd)
     else:
         # Use pacman for official packages
-        cmd = f"pacman -S --needed --noconfirm {packages_str}"
+        cmd = f"pacman -S {PACMAN_FLAGS} {packages_str}"
         return chroot_command(cmd)
 
 
 def install_essential_packages():
     """Install essential packages organized by category"""
     print("Installing essential packages...")
-    
-    essential_packages = [
-        # Development tools
-        'git',
-        'base-devel',
-        'gcc',
-        'neovim',
-        'ripgrep',
-        'fzf',
-        'lazygit',
-        'unzip',
-        'stow',
-        
-        # Shell and terminal
-        'zsh',
-        'nvm',
-        'lsd',
-        'kitty',
-        'zoxide',
-        
-        # Wayland/Hyprland
-        'hyprland',
-        'waybar',
-        'hyprpaper',
-        'hyprsunset',
-        'swaync',
-        'wofi',
-        
-        # System services
-        'sddm',
-        'network-manager-applet',
-        'wireless_tools',
-        'seatd',
-        
-        # Audio
-        'pipewire',
-        'pipewire-audio',
-        'pipewire-pulse', 
-        'wireplumber',
-        
-        # Applications
-        'ghostty',
-        'discord',
-        'zed',
-        'nwg-look',
-        
-        # Fonts
-        'ttf-jetbrains-mono-nerd'
-    ]
-    
-    return install_packages(essential_packages)
+    return install_packages(get_all_essential_packages())
 
 
 def install_amd_graphics_drivers():
     """Install AMD graphics drivers"""
     print("Installing AMD graphics drivers...")
-    
-    amd_packages = [
-        'libva-mesa-driver',
-        'mesa',
-        'vulkan-radeon',
-        'xf86-video-amdgpu',
-        'xf86-video-ati',
-        'xorg-server',
-        'xorg-xinit'
-    ]
-    
-    return install_packages(amd_packages)
+    return install_packages(get_amd_graphics_packages())
 
 
 def setup_aur_helper(username):
@@ -132,14 +73,7 @@ def setup_aur_helper(username):
 def install_aur_packages(username):
     """Install AUR packages"""
     print("Installing AUR packages...")
-    
-    aur_packages = [
-        'zen-browser-bin',
-        'wshowkeys-mao-git', 
-        'hyprshot'
-    ]
-    
-    return install_packages(aur_packages, use_aur=True, username=username)
+    return install_packages(get_aur_packages(), use_aur=True, username=username)
 
 
 def install_ohmyzsh(username):
