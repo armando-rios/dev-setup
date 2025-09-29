@@ -60,13 +60,10 @@ def get_safe_disks():
 
 
 def cleanup_disk(disk):
-    """Clean up disk before partitioning to avoid 'busy' errors"""
-    print(f"Cleaning up disk: {disk}")
+    """Clean up ONLY the selected disk before partitioning to avoid 'busy' errors"""
+    print(f"Cleaning up selected disk: {disk}")
     
-    # Safety check - don't clean the ISO device
-    if is_iso_device(disk):
-        print(f"ERROR: Refusing to clean {disk} - appears to be the ISO device!")
-        return False
+    # No automatic detection - only work on the user-selected disk
     
     # Step 1: Unmount any mounted partitions from this disk
     print("Unmounting any existing partitions...")
