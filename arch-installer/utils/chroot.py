@@ -58,7 +58,7 @@ def setup_locales(locale):
         return False
     
     # Set LANG variable
-    if not chroot_command(f"echo 'LANG={locale}' > /etc/locale.conf"):
+    if not chroot_command(f"bash -c \"echo 'LANG={locale}' > /etc/locale.conf\""):
         print("Failed to set LANG in locale.conf")
         return False
     
@@ -71,7 +71,7 @@ def setup_hostname(hostname):
     print(f"Setting hostname: {hostname}")
     
     # Set hostname
-    if not chroot_command(f"echo '{hostname}' > /etc/hostname"):
+    if not chroot_command(f"bash -c \"echo '{hostname}' > /etc/hostname\""):
         print("Failed to set hostname")
         return False
     
@@ -80,7 +80,7 @@ def setup_hostname(hostname):
 ::1		localhost
 127.0.1.1	{hostname}.localdomain	{hostname}"""
     
-    hosts_cmd = f"cat > /etc/hosts << 'EOF'\n{hosts_content}\nEOF"
+    hosts_cmd = f"bash -c \"cat > /etc/hosts << 'EOF'\n{hosts_content}\nEOF\""
     if not chroot_command(hosts_cmd):
         print("Failed to configure hosts file")
         return False
@@ -108,7 +108,7 @@ def setup_users(username, root_password, user_password):
     
     # Set root password
     print("Setting root password...")
-    cmd = f"echo 'root:{root_password}' | chpasswd"
+    cmd = f"bash -c \"echo 'root:{root_password}' | chpasswd\""
     print(f"Executing: {cmd}")
     if not chroot_command(cmd):
         print("ERROR: Failed to set root password")
@@ -126,7 +126,7 @@ def setup_users(username, root_password, user_password):
     
     # Set user password
     print(f"Setting password for user: {username}")
-    cmd = f"echo '{username}:{user_password}' | chpasswd"
+    cmd = f"bash -c \"echo '{username}:{user_password}' | chpasswd\""
     print(f"Executing: {cmd}")
     if not chroot_command(cmd):
         print(f"ERROR: Failed to set password for user: {username}")
