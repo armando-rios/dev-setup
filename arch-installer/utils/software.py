@@ -103,7 +103,7 @@ def setup_aur_helper(username):
     
     # Build and install yay
     print("Building and installing yay...")
-    build_cmd = f"sudo -u {username} bash -c \\\"cd /home/{username}/yay && makepkg -si --noconfirm\\\""
+    build_cmd = f'sudo -u {username} bash -c "cd /home/{username}/yay && makepkg -si --noconfirm"'
     if not chroot_command(build_cmd):
         print("Failed to build yay")
         return False
