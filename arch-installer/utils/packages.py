@@ -64,6 +64,7 @@ ESSENTIAL_PACKAGES = {
         'discord',
         'zed',
         'nwg-look',
+        'nautilus',
     ],
     
     'fonts': [
