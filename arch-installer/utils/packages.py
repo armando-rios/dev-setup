@@ -7,7 +7,6 @@ Package definitions for Arch Linux installer
 ESSENTIAL_PACKAGES = {
     'development': [
         'git',
-        'base-devel',
         'gcc',
         'neovim',
         'ripgrep',
@@ -15,6 +14,11 @@ ESSENTIAL_PACKAGES = {
         'lazygit',
         'unzip',
         'stow',
+        'wget',
+        'zoxide',
+        'htop',
+        'btop',
+        'tmux',
     ],
     
     'shell_terminal': [
@@ -22,6 +26,7 @@ ESSENTIAL_PACKAGES = {
         'nvm',
         'lsd',
         'kitty',
+        'ghostty',
         'zoxide',
     ],
     
@@ -32,24 +37,30 @@ ESSENTIAL_PACKAGES = {
         'hyprsunset',
         'swaync',
         'wofi',
+        'xdg-desktop-portal-hyprland',
+        'xdg-utils',
+        'dunst',
     ],
     
     'system_services': [
         'sddm',
         'network-manager-applet',
+        'iwd',
         'wireless_tools',
         'seatd',
     ],
     
     'audio': [
         'pipewire',
-        'pipewire-audio',
+        'pipewire-alsa',
         'pipewire-pulse', 
+        'pipewire-jack',
         'wireplumber',
+        'pavucontrol',
+        'helvum',
     ],
     
     'applications': [
-        'ghostty',
         'discord',
         'zed',
         'nwg-look',
@@ -78,6 +89,7 @@ AMD_GRAPHICS_PACKAGES = [
 
 # AUR packages
 AUR_PACKAGES = [
+    'catppuccin-gtk-theme-mocha',
     'zen-browser-bin',
     'wshowkeys-mao-git', 
     'hyprshot'
