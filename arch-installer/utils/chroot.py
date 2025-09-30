@@ -102,14 +102,10 @@ def setup_hostname(hostname):
 
 
 def setup_network():
-    """Enable network services"""
+    """Configure network services"""
     print("Configuring network services...")
     
-    # Enable NetworkManager
-    if not chroot_command("systemctl enable NetworkManager"):
-        print("Failed to enable NetworkManager")
-        return False
-    
+    # Network services will be enabled later via SYSTEM_SERVICES
     print("Network services configured successfully")
     return True
 

@@ -28,6 +28,7 @@ SYSTEM_SERVICES = [
     'sddm',           # Display manager
     'NetworkManager', # Network management  
     'seatd'           # Session management
+    'systemd-timesyncd' # Time synchronization
 ]
 
 # Sudo configuration
