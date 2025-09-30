@@ -27,7 +27,7 @@ DEFAULT_USERNAME = "user"
 SYSTEM_SERVICES = [
     'sddm',           # Display manager
     'NetworkManager', # Network management  
-    'seatd'           # Session management
+    'seatd',          # Session management
     'systemd-timesyncd' # Time synchronization
 ]
 
