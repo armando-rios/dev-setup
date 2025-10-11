@@ -89,6 +89,17 @@ def install_bun(username):
     print("Bun.js installed successfully")
     return True
 
+def apply_gtk_themes(username):
+  """Apply GTK themes using nwg-look"""
+  print("Applying GTK themes with nwg-look...")
+
+  theme_cmd = f"sudo -u {username} nwg-look -a"
+  if not chroot_command(theme_cmd):
+    print("Failed to apply GTK themes")
+    return False
+
+  print("GTK themes applied successfully")
+  return True
 
 def phase4_dotfiles_and_development(username):
     """Complete Phase 4: Dotfiles and development environment setup"""
@@ -97,6 +108,7 @@ def phase4_dotfiles_and_development(username):
     steps = [
         ("Cloning dotfiles repository", lambda: clone_dotfiles(username)),
         ("Setting up symbolic links with stow", lambda: setup_symbolic_links(username)),
+        ("Applying GTK themes", lambda: apply_gtk_themes(username)),
         ("Installing Node.js with nvm", lambda: install_nodejs_with_nvm(username)),
         ("Installing Bun.js", lambda: install_bun(username))
     ]
