@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 # Configuration
 REPO_USER="armando-rios"  # Replace with your GitHub username
 REPO_NAME="dev-setup"        # Replace with your repo name
-BRANCH="main"
+BRANCH="${INSTALLER_BRANCH:-main}" # Allow override with env var
 BASE_URL="https://raw.githubusercontent.com/${REPO_USER}/${REPO_NAME}/${BRANCH}"
 
 echo -e "${BLUE}╔══════════════════════════════════════════════════════════════╗${NC}"
