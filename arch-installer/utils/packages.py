@@ -5,71 +5,63 @@ Package definitions for Arch Linux installer
 
 # Essential packages organized by category
 ESSENTIAL_PACKAGES = {
-    'development': [
-        'git',
-        'gcc',
-        'neovim',
-        'ripgrep',
-        'fzf',
-        'lazygit',
-        'unzip',
-        'stow',
-        'wget',
-        'zoxide',
-        'htop',
-        'btop',
-        'tmux',
+    "development": [
+        "git",
+        "gcc",
+        "neovim",
+        "ripgrep",
+        "fzf",
+        "lazygit",
+        "unzip",
+        "stow",
+        "wget",
+        "zoxide",
+        "htop",
+        "btop",
+        "tmux",
     ],
-    
-    'shell_terminal': [
-        'zsh',
-        'nvm',
-        'lsd',
-        'kitty',
-        'ghostty',
-        'zoxide',
+    "shell_terminal": [
+        "zsh",
+        "nvm",
+        "lsd",
+        "kitty",
+        "ghostty",
+        "zoxide",
     ],
-    
-    'wayland_hyprland': [
-        'hyprland',
-        'waybar',
-        'hyprpaper',
-        'hyprsunset',
-        'swaync',
-        'wofi',
-        'xdg-desktop-portal-hyprland',
-        'xdg-utils',
-        'dunst',
+    "wayland_hyprland": [
+        "hyprland",
+        "waybar",
+        "hyprpaper",
+        "hyprsunset",
+        "swaync",
+        "wofi",
+        "xdg-desktop-portal-hyprland",
+        "xdg-utils",
+        "dunst",
     ],
-    
-    'system_services': [
-        'sddm',
-        'network-manager-applet',
-        'iwd',
-        'wireless_tools',
-        'seatd',
+    "system_services": [
+        "sddm",
+        "network-manager-applet",
+        "iwd",
+        "wireless_tools",
+        "seatd",
     ],
-    
-    'audio': [
-        'pipewire',
-        'pipewire-alsa',
-        'pipewire-pulse', 
-        'pipewire-jack',
-        'wireplumber',
-        'pavucontrol',
-        'helvum',
+    "audio": [
+        "pipewire",
+        "pipewire-alsa",
+        "pipewire-pulse",
+        "pipewire-jack",
+        "wireplumber",
+        "pavucontrol",
+        "helvum",
     ],
-    
-    'applications': [
-        'discord',
-        'zed',
-        'nwg-look',
-        'nautilus',
+    "applications": [
+        "discord",
+        "zed",
+        "nwg-look",
+        "nautilus",
     ],
-    
-    'fonts': [
-        'ttf-jetbrains-mono-nerd'
-    ]
+    "fonts": ["ttf-jetbrains-mono-nerd"],
 }
 
 # Flatten all essential packages into a single list
@@ -79,34 +71,38 @@ for category_packages in ESSENTIAL_PACKAGES.values():
 
 # AMD graphics drivers
 AMD_GRAPHICS_PACKAGES = [
-    'libva-mesa-driver',
-    'mesa',
-    'vulkan-radeon',
-    'xf86-video-amdgpu',
-    'xf86-video-ati',
-    'xorg-server',
-    'xorg-xinit'
+    "libva-mesa-driver",
+    "mesa",
+    "vulkan-radeon",
+    "xf86-video-amdgpu",
+    "xf86-video-ati",
+    "xorg-server",
+    "xorg-xinit",
 ]
 
 # AUR packages
 AUR_PACKAGES = [
-    'catppuccin-gtk-theme-mocha',
-    'zen-browser-bin',
-    'wshowkeys-mao-git', 
-    'hyprshot'
+    "brave-origin-bin",
+    "catppuccin-gtk-theme-mocha",
+    "wshowkeys-mao-git",
+    "hyprshot",
 ]
+
 
 def get_packages_by_category(category):
     """Get packages for a specific category"""
     return ESSENTIAL_PACKAGES.get(category, [])
 
+
 def get_all_essential_packages():
     """Get all essential packages as a flat list"""
     return ALL_ESSENTIAL_PACKAGES.copy()
 
+
 def get_amd_graphics_packages():
     """Get AMD graphics driver packages"""
     return AMD_GRAPHICS_PACKAGES.copy()
+
 
 def get_aur_packages():
     """Get AUR packages"""
